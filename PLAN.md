@@ -353,6 +353,32 @@ tsomir/
   - Documentar LPak_format.md final
   - Probar con un mod real (no solo círculo de prueba)
 
+### Sesión 5 — 2026-09-03 (reim SCUMM bar + etcpak + restore)
+- **Hecho**:
+  - **Reim SCUMM bar (room 28)**: 4 PNGs reimaginados con AI entregados
+    a 1600×1600 RGB. Pipeline: resize LANCZOS a 1024×1024 → DXT1 → pak
+    rebuild / override suelto. Inyectados y validados visualmente en
+    Wine.
+  - **Integración etcpak**: instalado `etcpak` (`pip install etcpak`) y
+    actualizado `tools/png_to_dxt.py` para usarlo como backend primario
+    (range-fit queda como fallback). Cae del 6-7% al 3-4% de error
+    promedio por canal y ~10× más rápido.
+  - **`lpak_room_override.py --restore`**: nueva flag para borrar
+    overrides de un room (o `all`). Bug detectado: la primera versión
+    ignoraba `--dry-run` y borraba igual — corregido (respetar flag +
+    pedir confirmación).
+  - **Limpieza overrides rojos**: tras el test de override masivo del
+    bar (21 sprites a rojo), se eliminaron los 17 archivos no-reimaginados.
+    Quedan solo los 4 reimaginados en `extracted/art/rooms/images/28_bar/`.
+  - **Repo público**: inicializado `vdirienzo/mise-lpak-tools` en GitHub
+    (https://github.com/vdirienzo/mise-lpak-tools), privado al inicio
+    y luego publicado. Incluye los 11 scripts Python + 4 bash + docs.
+- **Decidido**:
+  - Para mods de una pieza: usar override por archivo suelto (no tocar
+    el pak, no perder el pristine).
+  - Para mods grandes / reconstrucción masiva: usar
+    `lpak_rebuild_with_mods.py` con un directorio `mods/`.
+
 ---
 
 ## Comandos de referencia rápida

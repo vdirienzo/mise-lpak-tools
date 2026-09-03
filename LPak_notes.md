@@ -162,3 +162,53 @@ typedef struct PakFileEntry {
 4. Strip el header DDS de 124 bytes → volver a `.dxt`.
 5. `lpak_repack.py pak.dxt.dxt ruta/en/pak` con `-y`.
 6. Probar en Wine.
+
+### Sesión 5 — 2026-09-03 (reim SCUMM bar + etcpak + restore)
+
+#### Reimaginada del SCUMM bar (room 28)
+- 4 PNGs reimaginados con AI (`work/room_28_extracted_reimagined/`),
+  entregados a 1600×1600 RGB. Hay que **resizear a 1024×1024** (LANCZOS)
+  antes de inyectar, porque el slot del pak es fijo en 1024×1024.
+- Inyección: dos métodos posibles, ambos funcionan:
+  - `lpak_rebuild_with_mods.py` → reconstruye un pak completo con los mods
+    en sus offsets originales (idéntico en bytes al pristine + 4 zonas
+    cambiadas).
+  - **Override por archivo suelto**: el motor MISE acepta `.dxt` sueltos
+    en `extracted/<ruta>` que **toman precedencia** sobre el pak. Más
+    rápido, no destructivo, no requiere regenerar el pak.
+
+#### Hallazgo MAYOR — etcpak >> range-fit
+- El compresor nativo en `dxt5_compress.py` (range-fit) produce artefactos
+  visibles en imágenes muy detalladas (~6-7% avg error por canal).
+- Instalando `etcpak` (`pip install etcpak`) y usándolo como backend,
+  la calidad mejora ~2× (3-4% avg error por canal) y la velocidad es
+  ~10× mayor.
+- `png_to_dxt.py` ahora usa etcpak cuando está disponible y cae al
+  range-fit si no. **Importante:** etcpak espera layout RGBA (4 bytes/px);
+  para DXT1 hay que rellenar alpha=255 manualmente antes de llamar
+  `compress_to_dxt1()`.
+- Validación sobre los 4 reimaginados del bar:
+  | chunk | range-fit | etcpak |
+  |---|---|---|
+  | 0_0 | 15.67 | **8.75** |
+  | 1024_0 | 18.02 | **10.30** |
+  | 2048_0 | 18.19 | **8.59** |
+  | 3072_0 | 13.34 | **6.16** |
+
+  (todos /255, promedio por canal)
+
+#### `lpak_room_override.py` ahora tiene `--restore`
+- Bug detectado y corregido: la primera versión ignoraba `--dry-run` y
+  borraba los archivos igual. Fix: respetar el flag + pedir confirmación
+  interactiva antes de borrar.
+- Modos: `<room_id> --restore` (solo ese room) o `all --restore` (todos
+  los overrides). Limpia los archivos rojos de testing sin tocar el pak.
+
+#### Limpieza de overrides rojos
+- Tras una sesión anterior donde se overridearon los 21 sprites del room
+  28 con color rojo puro (`lpak_room_override.py 28 --color ff0000`),
+  los 17 archivos no-reimaginados se eliminaron del directorio de
+  overrides. Los 4 reimaginados del bar permanecen.
+- Resultado: el bar muestra el fondo reimagenado + el resto del arte
+  original (piratas, decoraciones, layer1).
+
