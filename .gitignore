@@ -1,0 +1,26 @@
+__pycache__/
+*.pyc
+*.pyo
+
+# Temp files
+/tmp/
+*.tmp
+*.swp
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Pak files are huge and proprietary
+*.pak
+
+# Reim work files (not committed by default)
+work/
+extracted/
