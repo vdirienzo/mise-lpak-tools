@@ -1,7 +1,7 @@
 # mise-lpak-tools
 
 Reverse-engineering tooling and modding pipeline for the **LPAK** archive format
-used by *The Secret of Monkey Island: Special Edition* (MISE engine, LucasArts).
+used by *The Secret of Monkey Island: Special Edition* (MISE engine, LucasArts 2009).
 
 ## What this is
 
@@ -9,8 +9,15 @@ used by *The Secret of Monkey Island: Special Edition* (MISE engine, LucasArts).
 (textures, sounds, scripts, room layouts, costumes, …). The format was already
 publicly documented by [bgbennyboy](https://github.com/bgbennyboy/Monkey-Island-Explorer)
 and [timfel](https://github.com/timfel/monkey) — this repo packages the Python
-tooling developed while building the **HiColor reim** pipeline (swap the
-8-color EGA backgrounds for HD reim paintings while keeping game coordinates).
+tooling developed while building a **reimagined-backgrounds** pipeline: swap
+LucasArts' official HD hand-painted room backgrounds for AI-reimagined
+versions, keeping the engine coordinates, scene XML, and the rest of the
+assets intact.
+
+**Scope note:** this repo is for the **2009 Special Edition** (MISE engine,
+DXT textures, LPAK archive). It is *not* related to the original 1990 8-bit
+EGA / SCUMM v5 DOS version — that is a different engine and a different
+project.
 
 ## Layout
 
